@@ -87,18 +87,24 @@
     outline: 2px solid hsl(var(--ring));
     outline-offset: 2px;
   }
+}
 
-  /* Shiki dual-theme output: light colors by default, dark colors under .dark */
-  .shiki,
-  .shiki span {
-    background-color: transparent !important;
-  }
+/* Shiki emits both themes as CSS variables (defaultColor: false) and no colors of
+   its own; pick the right set here. Kept outside @layer because the markup is
+   injected at runtime, so Tailwind never sees these class names in the source. */
+.shiki,
+.shiki span {
+  color: var(--shiki-light);
+  font-style: var(--shiki-light-font-style);
+  font-weight: var(--shiki-light-font-weight);
+  background-color: transparent;
+}
 
-  .dark .shiki,
-  .dark .shiki span {
-    color: var(--shiki-dark) !important;
-    font-style: var(--shiki-dark-font-style) !important;
-  }
+.dark .shiki,
+.dark .shiki span {
+  color: var(--shiki-dark);
+  font-style: var(--shiki-dark-font-style);
+  font-weight: var(--shiki-dark-font-weight);
 }
 
 @layer utilities {

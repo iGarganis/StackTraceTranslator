@@ -12,9 +12,10 @@ interface CodeBlockProps {
   compact?: boolean;
 }
 
-// Light theme colors are inlined; the dark ones are exposed as --shiki-dark
-// and swapped in by globals.css when the .dark class is active.
+// Both themes are emitted as CSS variables only (--shiki-light / --shiki-dark);
+// globals.css applies the set that matches the current theme.
 const THEMES = { light: "github-light-default", dark: "github-dark-default" } as const;
+const OPTIONS = { themes: THEMES, defaultColor: false } as const;
 
 export function CodeBlock({ code, language, compact = false }: CodeBlockProps) {
   const highlighter = useShiki();
@@ -24,10 +25,10 @@ export function CodeBlock({ code, language, compact = false }: CodeBlockProps) {
   useEffect(() => {
     if (!highlighter || !code) return;
     try {
-      setHtml(highlighter.codeToHtml(code, { lang: normalizeLanguage(language), themes: THEMES }));
+      setHtml(highlighter.codeToHtml(code, { lang: normalizeLanguage(language), ...OPTIONS }));
     } catch {
       // Unrecognized language: fall back to plain text
-      setHtml(highlighter.codeToHtml(code, { lang: "text", themes: THEMES }));
+      setHtml(highlighter.codeToHtml(code, { lang: "text", ...OPTIONS }));
     }
   }, [highlighter, code, language]);
 

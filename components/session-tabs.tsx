@@ -2,7 +2,7 @@
 
 import { useRef, useEffect } from "react";
 import { Plus, X, Terminal } from "lucide-react";
-import { cn, relativeTime } from "@/lib/utils";
+import { cn, languageTag, relativeTime } from "@/lib/utils";
 import type { HistoryEntry } from "@/lib/types";
 
 interface SessionTabsProps {
@@ -75,7 +75,7 @@ export function SessionTabs({ entries, activeId, onSelect, onRemove, onNew }: Se
                     isActive ? "bg-primary/15 text-primary" : "bg-muted text-muted-foreground"
                   )}
                 >
-                  {entry.language.slice(0, 3)}
+                  {languageTag(entry.language)}
                 </span>
                 <span className="truncate font-mono text-xs">{preview}</span>
               </button>

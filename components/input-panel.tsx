@@ -7,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { MODELS } from "@/lib/llm/models";
 import { STACK_TRACE_INPUT_ID } from "@/lib/sample-trace";
-import { cn } from "@/lib/utils";
+import { cn, type ErrorLocation } from "@/lib/utils";
 
 interface InputPanelProps {
   stackTrace: string;
@@ -15,7 +15,7 @@ interface InputPanelProps {
   useMultiModel: boolean;
   isLoading: boolean;
   shareLinkCopied: boolean;
-  errorLine: number | null;
+  errorLocation: ErrorLocation | null;
   onStackTraceChange: (value: string) => void;
   onCodeContextChange: (value: string) => void;
   onMultiModelChange: (value: boolean) => void;
@@ -39,7 +39,7 @@ export function InputPanel({
   useMultiModel,
   isLoading,
   shareLinkCopied,
-  errorLine,
+  errorLocation,
   onStackTraceChange,
   onCodeContextChange,
   onMultiModelChange,
@@ -50,17 +50,19 @@ export function InputPanel({
   const [codeContextOpen, setCodeContextOpen] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  function jumpToErrorLine() {
+  // Selects the frame in the trace that points at the error location
+  function highlightErrorFrame() {
     const el = textareaRef.current;
-    if (!el || !errorLine) return;
+    if (!el || !errorLocation) return;
+    const { traceLine } = errorLocation;
     const lines = el.value.split("\n");
-    const start = lines.slice(0, errorLine - 1).join("\n").length + (errorLine > 1 ? 1 : 0);
-    const end = start + (lines[errorLine - 1]?.length ?? 0);
+    if (traceLine >= lines.length) return;
+    const start = lines.slice(0, traceLine).reduce((sum, l) => sum + l.length + 1, 0);
     el.focus();
-    el.setSelectionRange(start, end);
-    // Scroll the textarea so the selected line is visible
+    el.setSelectionRange(start, start + lines[traceLine].length);
+    // Scroll so the selected line is visible with a little context above it
     const lineHeight = parseFloat(getComputedStyle(el).lineHeight) || 18;
-    el.scrollTop = (errorLine - 3) * lineHeight;
+    el.scrollTop = Math.max(0, (traceLine - 2) * lineHeight);
   }
 
   const traceLength = stackTrace.length;
@@ -115,14 +117,26 @@ export function InputPanel({
           </p>
         )}
 
-        {errorLine && !isOverLimit && (
+        {errorLocation && !isOverLimit && (
           <button
             type="button"
-            onClick={jumpToErrorLine}
-            className="flex items-center gap-1.5 self-start py-0.5 text-xs font-medium text-warning transition-opacity hover:opacity-80"
+            onClick={highlightErrorFrame}
+            title="Highlight this frame in the trace"
+            className="flex min-w-0 items-center gap-1.5 self-start py-0.5 text-xs font-medium text-warning transition-opacity hover:opacity-80"
           >
-            <ArrowDown className="h-[13px] w-[13px]" />
-            Error on line <span className="font-mono">{errorLine}</span>
+            <ArrowDown className="h-[13px] w-[13px] shrink-0" />
+            {errorLocation.file ? (
+              <>
+                Error at{" "}
+                <span className="truncate font-mono">
+                  {errorLocation.file}:{errorLocation.line}
+                </span>
+              </>
+            ) : (
+              <>
+                Error on line <span className="font-mono">{errorLocation.line}</span>
+              </>
+            )}
           </button>
         )}
       </div>

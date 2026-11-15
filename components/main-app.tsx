@@ -14,7 +14,7 @@ import { useHistory } from "@/hooks/use-history";
 import { useShare } from "@/hooks/use-share";
 import { useToast } from "@/hooks/use-toast";
 import { SAMPLE_TRACE, STACK_TRACE_INPUT_ID } from "@/lib/sample-trace";
-import { extractErrorLine } from "@/lib/utils";
+import { findErrorLocation } from "@/lib/utils";
 import type { AnalysisError, AppResponse, HistoryEntry } from "@/lib/types";
 
 export function MainApp() {
@@ -80,7 +80,7 @@ export function MainApp() {
 
   // ── Action handlers ───────────────────────────────────────────────────────
   // Derived — null when no result yet or no line found in the trace
-  const errorLine = response ? extractErrorLine(stackTrace) : null;
+  const errorLocation = response ? findErrorLocation(stackTrace) : null;
 
   const runAnalysis = useCallback(async (temperature: number) => {
     if (!stackTrace.trim() || isLoading) return;
@@ -224,7 +224,7 @@ export function MainApp() {
                 useMultiModel={useMultiModel}
                 isLoading={isLoading}
                 shareLinkCopied={shareLinkCopied}
-                errorLine={errorLine}
+                errorLocation={errorLocation}
                 onStackTraceChange={setStackTrace}
                 onCodeContextChange={setCodeContext}
                 onMultiModelChange={setUseMultiModel}
@@ -236,7 +236,7 @@ export function MainApp() {
           </div>
         </div>
 
-        <p className="mt-3.5 flex items-center justify-center gap-1.5 text-xs text-muted-foreground">
+        <p className="mt-3.5 hidden items-center justify-center gap-1.5 text-xs text-muted-foreground sm:flex">
           <Kbd>Ctrl</Kbd>
           <Kbd>K</Kbd>
           command palette

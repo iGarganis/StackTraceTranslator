@@ -61,7 +61,7 @@ export function EmptyState({ onTrySample }: EmptyStateProps) {
         ))}
       </div>
 
-      <div className="flex gap-4 text-xs text-muted-foreground">
+      <div className="hidden gap-4 text-xs text-muted-foreground sm:flex">
         <span className="flex items-center gap-1">
           <Kbd>Ctrl</Kbd>
           <Kbd>↵</Kbd> to explain
