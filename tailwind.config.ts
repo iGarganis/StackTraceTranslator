@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+import animate from "tailwindcss-animate";
 
 // Every color maps to a CSS variable defined in app/globals.css.
 // The `<alpha-value>` placeholder keeps opacity modifiers (e.g. bg-primary/10) working.
@@ -83,7 +84,7 @@ const config: Config = {
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [animate],
 };
 
 export default config;

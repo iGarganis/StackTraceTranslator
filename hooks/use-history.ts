@@ -16,7 +16,7 @@ function extractLanguage(response: AppResponse): string {
 // Map them onto the current primary/secondary keys so they still render.
 const LEGACY_MODEL_KEYS: Record<string, "primary" | "secondary"> = { groq: "primary", gemini: "secondary" };
 
-function migrateEntry(entry: HistoryEntry): HistoryEntry {
+export function migrateEntry(entry: HistoryEntry): HistoryEntry {
   const res = entry.response as unknown as Record<string, unknown>;
   if (res.multiModel) {
     const results = res.results as Record<string, unknown>;

@@ -37,7 +37,6 @@ export function useTypewriter(text: string, active: boolean, onComplete?: () => 
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [text, active]);
 
   return displayed;

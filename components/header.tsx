@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useTheme } from "next-themes";
 import { Sun, Moon, Github, Terminal, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -18,12 +19,12 @@ export function Header({ historyCount, onHistoryOpen }: HeaderProps) {
     <header className="sticky top-0 z-40 w-full border-b border-border bg-background/80 backdrop-blur-md">
       <div className="mx-auto flex h-14 max-w-[1248px] items-center justify-between gap-4 px-3 sm:px-6">
         {/* Logo */}
-        <a href="/" className="flex items-center gap-2.5 text-foreground">
+        <Link href="/" className="flex items-center gap-2.5 text-foreground">
           <span className="flex h-7 w-7 items-center justify-center rounded-[7px] border border-primary/30 bg-primary/10 text-primary">
             <Terminal className="h-[15px] w-[15px]" strokeWidth={2.25} />
           </span>
           <span className="whitespace-nowrap text-sm font-semibold tracking-tight">{SITE.name}</span>
-        </a>
+        </Link>
 
         {/* Actions */}
         <nav className="flex items-center gap-0.5">
