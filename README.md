@@ -1,6 +1,10 @@
 # Stack Trace Translator
 
+[![CI](https://github.com/iGarganis/StackTraceTranslator/actions/workflows/ci.yml/badge.svg)](https://github.com/iGarganis/StackTraceTranslator/actions/workflows/ci.yml)
+
 > Paste a stack trace and get a plain-English explanation: the root cause, likely causes, a suggested fix, the assumptions the model made, and how confident it is. You can also run two different LLMs side by side and see whether they agree.
+
+![Stack Trace Translator comparing two models' analyses of a JavaScript TypeError](docs/screenshot.png)
 
 ---
 
@@ -28,7 +32,7 @@ The project explores three patterns for building more trustworthy LLM-powered to
 - **Optional code context:** paste the surrounding function or file to improve accuracy.
 - **Explain simply:** rephrases the analysis without jargon, for beginners.
 - **Try again:** re-runs the analysis at a higher temperature for a different take.
-- **Error line detection:** finds the failing line number in Python, Java, Kotlin, JS/TS, C#, Ruby and Go traces. Clicking it jumps to that line.
+- **Error location:** points to the failing file and line (e.g. `UserList.jsx:12`) in Python, JS/TS, Java, Kotlin, C#, Go, Rust, Ruby and PHP traces. Frames from dependencies such as `node_modules` or `react-dom` are skipped. Clicking it highlights that frame in the input.
 
 **Workflow**
 - **Session tabs:** every analysis opens as a tab you can switch between or close.
@@ -90,7 +94,7 @@ When they disagree, both answers are shown side by side under an amber "Models d
 
 ### Prerequisites
 
-- Node.js 18+
+- Node.js 20+
 - A free [Groq API key](https://console.groq.com)
 
 ### Steps
@@ -114,6 +118,21 @@ npm run dev
 Then open [http://localhost:3000](http://localhost:3000).
 
 To get a Groq key, sign up at [console.groq.com](https://console.groq.com), open **API Keys** and create one. The free tier is enough to run the project.
+
+### Checks
+
+```bash
+npm test            # unit tests (Vitest)
+npm run lint        # ESLint
+npm run typecheck   # TypeScript
+npm run build       # production build
+```
+
+The same four checks run in GitHub Actions on every push and pull request. The tests cover error-location parsing across languages, the LLM output schema, the model agreement heuristic and history migration.
+
+### Deployment
+
+The app deploys to Vercel with no extra configuration. Set `GROQ_API_KEY` in the project's environment variables. Link previews use the Vercel production domain automatically; if you serve it from a custom domain, also set `NEXT_PUBLIC_SITE_URL` (e.g. `https://example.com`).
 
 ---
 
@@ -152,11 +171,14 @@ Browser (client components)
 ## Project structure
 
 ```
+├── .github/workflows/ci.yml    # Lint, typecheck, test and build on every push
 ├── app/
 │   ├── api/explain/route.ts    # Analysis endpoint: validation, rate limiting, LLM calls
 │   ├── api/simplify/route.ts   # "Explain simply" endpoint
 │   ├── globals.css             # Design tokens (light + dark CSS variables)
-│   ├── layout.tsx              # Fonts (Geist, Geist Mono) and theme provider
+│   ├── layout.tsx              # Fonts, theme provider, page metadata
+│   ├── opengraph-image.tsx     # Link-preview image, generated at build time
+│   ├── icon.svg                # Favicon
 │   └── page.tsx                # Entry point
 ├── components/
 │   ├── ui/                     # Primitives: button, badge, dialog, textarea, kbd, collapsible
@@ -181,7 +203,10 @@ Browser (client components)
 │   │   └── schema.ts           # Zod schema: the LLM output contract
 │   ├── prompts.ts              # System and user prompts
 │   ├── rate-limit.ts           # In-memory rate limiter
-│   └── types.ts                # Shared client types
+│   ├── types.ts                # Shared client types
+│   └── utils.ts                # Error-location parsing and display helpers
+├── docs/screenshot.png         # README screenshot
+├── *.test.ts                   # Unit tests, next to the code they cover
 └── .env.local.example          # Environment variable template
 ```
 
