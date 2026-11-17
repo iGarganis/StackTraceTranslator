@@ -4,6 +4,8 @@
 
 > Paste a stack trace and get a plain-English explanation: the root cause, likely causes, a suggested fix, the assumptions the model made, and how confident it is. You can also run two different LLMs side by side and see whether they agree.
 
+**Live demo:** [stacktrace.garganis.dev](https://stacktrace.garganis.dev)
+
 ![Stack Trace Translator comparing two models' analyses of a JavaScript TypeError](docs/screenshot.png)
 
 ---
@@ -132,7 +134,7 @@ The same four checks run in GitHub Actions on every push and pull request. The t
 
 ### Deployment
 
-The app deploys to Vercel with no extra configuration. Set `GROQ_API_KEY` in the project's environment variables. Link previews use the Vercel production domain automatically; if you serve it from a custom domain, also set `NEXT_PUBLIC_SITE_URL` (e.g. `https://example.com`).
+The app deploys to Vercel with no extra configuration. Set `GROQ_API_KEY` in the project's environment variables. Link previews use the project's production domain automatically, including a custom domain. Set `NEXT_PUBLIC_SITE_URL` (e.g. `https://example.com`) only to override it.
 
 ---
 
